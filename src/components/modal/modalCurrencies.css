@@ -1,0 +1,10 @@
+.modal_c {
+    opacity: 0;
+    width: 10rem;
+    height: 10rem;
+    background: #000;
+}
+
+.modal_c.active {
+    opacity: 1;
+}

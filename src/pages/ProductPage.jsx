@@ -30,13 +30,11 @@ const productIdQuery = gql`
 `
 
 class Productpage extends Component {
-
-
+ 
   state = {
-    id: window.location.href.substring(30)
+    id: window.location.href.substring(30),
+    selectedAttributes: []
   }
-
-
 
   render() {
     return (

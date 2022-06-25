@@ -14,9 +14,12 @@ const client = new ApolloClient({
 const container = document.getElementById('root')
 const root = ReactDOM.createRoot(container)
 root.render(
-        <ApolloProvider client={client}>
+
+    <ApolloProvider client={client}>
+        
             <App />
-        </ApolloProvider>
+       
+    </ApolloProvider>
 
 )
 

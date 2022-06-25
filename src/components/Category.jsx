@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Context } from '../context/Context';
 import './Category.css';
+import circleIcon from '../assets/icons/Circle_Icon.png';
 
 
 
@@ -14,10 +15,9 @@ class Category extends Component {
 
     static contextType = Context;
 
-
     displayCategory = () => {
         let data = this.props.data;
-        let currencyIndex = this.context.currencySwitcher(this.context.state.currencyLabel)
+        let currencyIndex = this.context.state.currencyId;
         if (data.loading) {
             return <div>Loading...</div>
         }
@@ -40,7 +40,7 @@ class Category extends Component {
                     <div className='category_products'>
                         {data.categories[index].products.map((product, id) =>
                             <div key={id} className='categoty_product'>
-                                <button disabled className='btn_product_img'>
+                                <button className='btn_product_img'>
                                     <Link onClick={(e) => {
                                         if (!product.inStock) { e.preventDefault() }
                                         }}
@@ -48,6 +48,8 @@ class Category extends Component {
 
                                         <img className={product.inStock ? 'category_product_img' : 'category_outOfStock_product_img'}
                                             src={product.gallery[0]} alt="no image" />
+                                        
+                                        <img className='circleIcon' src={circleIcon} alt={circleIcon} />
 
                                         {product.inStock ? null : <p className='p_outOfStock'>Out of stock</p>}
                                     </Link>

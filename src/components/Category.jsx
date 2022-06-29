@@ -15,6 +15,27 @@ class Category extends Component {
 
     static contextType = Context;
 
+    displayCircleIcon = (productId) => {
+        if (this.context.state.selectedProducts.length === 0) {
+            return null;
+        }
+        for (let i = 0; i < this.context.state.selectedProducts.length; i++) {
+            if (productId === this.context.state.selectedProducts[i].id && 
+                this.context.state.selectedProducts[i].selectedAttributesId.length === 
+                this.context.state.selectedProducts[i].attributes.length) {
+                for (let j = 0; j < this.context.state.selectedProducts[i].selectedAttributesId.length; j++) {
+                    if (this.context.state.selectedProducts[i].selectedAttributesId[j] === undefined) {
+                        return null;
+                    }  
+                }
+                return (
+                    <img className='circleIcon' src={circleIcon} alt={circleIcon} />
+                )
+            }
+            return null; 
+        }
+    }
+
     displayCategory = () => {
         let data = this.props.data;
         let currencyIndex = this.context.state.currencyId;
@@ -42,14 +63,17 @@ class Category extends Component {
                             <div key={id} className='categoty_product'>
                                 <button className='btn_product_img'>
                                     <Link onClick={(e) => {
-                                        if (!product.inStock) { e.preventDefault() }
-                                        }}
+                                         if (!product.inStock) {
+                                            e.preventDefault();                                   
+                                        }
+                                    }}
+
                                         to={`/product/${product.id}`}>
 
                                         <img className={product.inStock ? 'category_product_img' : 'category_outOfStock_product_img'}
                                             src={product.gallery[0]} alt="no image" />
-                                        
-                                        <img className='circleIcon' src={circleIcon} alt={circleIcon} />
+
+                                        {this.displayCircleIcon(product.id)}
 
                                         {product.inStock ? null : <p className='p_outOfStock'>Out of stock</p>}
                                     </Link>

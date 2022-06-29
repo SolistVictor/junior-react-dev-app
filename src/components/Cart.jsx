@@ -14,7 +14,7 @@ class Cart extends Component {
     static contextType = Context;
 
     componentDidMount() {
-        this.context.summaryPrice()
+        this.context.calculatePrice()
     }
 
     displayArrows(product, productId) {
@@ -34,13 +34,13 @@ class Cart extends Component {
     }
 
     styleSwitcher = (id, attrId, name, product) => {
-        if (product.selectedAttributes[attrId] === id && name === 'Color') {
+        if (product.selectedAttributesId[attrId] === id && name === 'Color') {
             return 'btn_color_selected'
         }
         if (name === 'Color') {
             return 'btn_color'
         }
-        if (product.selectedAttributes[attrId] === id && name !== 'Color') {
+        if (product.selectedAttributesId[attrId] === id && name !== 'Color') {
             return 'btn_size_selected'
         }
         else if (name !== 'Color') {

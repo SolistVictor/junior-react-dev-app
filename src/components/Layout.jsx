@@ -41,14 +41,12 @@ class Layout extends Component {
             quantity: 0,
             totalPrice: 0,
             tax: 0,
-            selectedProducts: []
-
+            selectedProducts: [],
         }
     }
     static getDerivedStateFromProps(props, state) {
         return { currencyData: props.data };
     }
-
 
     displayCategory = () => {
         let data = this.props.data;
@@ -115,18 +113,47 @@ class Layout extends Component {
         this.setState({ modalActive: !this.state.modalActive });
     }
 
-    addCartItemToStore = (product, selectedAttributes) => {
-        // for (let i = 0; i < this.state.storeItems.length; i++) {
-        //     if (this.state.storeItems[i].id === product.id) {
-        //         let newItems = [...this.state.storeItems];
-        //         newItems[i].counter++;
-        //         this.setState({ storeItems: [...newItems] });
-        //         return;
-        //     }
-        // }
-        let item = { ...product, imageIndex: 0, counter: 1, selectedAttributes: selectedAttributes };
+    addCartItemToStore = (product, selectedAttributesId) => {
+        for (let i = 0; i < this.state.storeItems.length; i++) {
+            if (this.state.storeItems[i].id === product.id) {
+                for (let j = 0; j < this.state.storeItems[i].selectedAttributesId.length; j++) {
+                    if (this.state.storeItems[i].selectedAttributesId[j] === selectedAttributesId[j]) {
+                        let x = this.state.storeItems[i]; 
+                        x.counter++;
+                        return this.setState({storeItems: [...this.state.storeItems]})
+                    }
+                }
+
+            }
+        }
+        let item = { ...product, imageIndex: 0, counter: 1, selectedAttributesId: selectedAttributesId };
+        //delete from selectedProducts, add to the cart
+        let selectedProducts = this.state.selectedProducts;
+        selectedProducts.splice(selectedProducts.findIndex(el => el.id === product.id), 1)
+
         this.setState({ storeItems: [...this.state.storeItems, item] });
         this.calculatePrice();
+    }
+
+    addItemToSelectedProducts = (product) => {
+        for (let i = 0; i < this.state.selectedProducts.length; i++) {
+            if(this.state.selectedProducts[i].id === product.id){
+              return;                                       
+            }
+        }
+        let selectedProduct = {
+            ...product, imageIndex: 0, counter: 1,
+            selectedAttributesId: []
+        };
+
+        this.setState({ selectedProducts: [...this.state.selectedProducts, selectedProduct] });
+    }
+
+    onSelectedAttributesChange = (productId, attributeId, id) => {
+        let selectedProducts = this.state.selectedProducts;
+        let index = selectedProducts.findIndex(el => el.id === productId);
+        selectedProducts[index].selectedAttributesId[attributeId] = id;
+        this.setState({selectedProducts: selectedProducts});
     }
 
     removeCartProduct = (index, productId) => {
@@ -137,17 +164,12 @@ class Layout extends Component {
             }
         }
         this.setState({ storeItems: items })
-        // this.setState({
-        //     storeItems: this.state.storeItems.filter(product => {
-        //         return product.id !== id;
-        //     })
-        // })
     }
 
     increaseProductAmount = (index) => {
         let items = [...this.state.storeItems];
         items[index].counter++;
-        this.setState({ storeItems: [...items] });
+        this.setState({ storeItems: items });
         this.calculatePrice();
     }
 
@@ -217,14 +239,15 @@ class Layout extends Component {
         return (
             <Context.Provider value={{
                 state: this.state,
-                currencySwitcher: this.currencySwitcher,
                 addCartItemToStore: this.addCartItemToStore,
                 increaseProductAmount: this.increaseProductAmount,
                 decreaseProductAmount: this.decreaseProductAmount,
                 clickArrowRight: this.clickArrowRight,
                 clickArrowLeft: this.clickArrowLeft,
                 changeSelectedProductAttribute: this.changeSelectedProductAttribute,
-                summaryPrice: this.calculatePrice
+                calculatePrice: this.calculatePrice,
+                addItemToSelectedProducts: this.addItemToSelectedProducts,
+                onSelectedAttributesChange: this.onSelectedAttributesChange
             }}>
                 <div className='container'>
                     <nav className='navbar'>

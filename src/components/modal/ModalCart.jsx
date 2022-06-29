@@ -26,13 +26,13 @@ class ModalCart extends Component {
     }
 
     styleSwitcher = (id, attrId, name, product) => {
-        if (product.selectedAttributes[attrId] === id && name === 'Color') {
+        if (product.selectedAttributesId[attrId] === id && name === 'Color') {
             return 'btn_itemColor_selected'
         }
         if (name === 'Color') {
             return 'btn_itemColor'
         }
-        if (product.selectedAttributes[attrId] === id && name !== 'Color') {
+        if (product.selectedAttributesId[attrId] === id && name !== 'Color') {
             return 'btn_itemSize_selected'
         }
         else if (name !== 'Color') {

@@ -17,39 +17,53 @@ class Product extends Component {
         }
     }
 
-    static getDerivedStateFromProps(props, state) {
-        for (let i = 0; i < state.selectedAttributesId.length; i++) {
-            if (state.selectedAttributesId[i] === undefined) {
-                return null;
+    componentDidMount() {
+        this.context.addItemToSelectedProducts(this.props.data.product);
+
+    }
+
+    componentDidUpdate() {
+        if (this.state.disabled === false) {
+            return;
+        }
+        let selectedProduct = this.context.state.selectedProducts.find(el => el.id === this.props.data.product.id);
+        for (let i = 0; i < selectedProduct.selectedAttributesId.length; i++) {
+            if (selectedProduct.selectedAttributesId[i] === undefined) {            
+                return;
             }
         }
-        if (state.selectedAttributesId.length === props.data.product.attributes.length) {
-            return { disabled: false }
+        if (selectedProduct.selectedAttributesId.length === this.props.data.product.attributes.length) {
+            this.setState({ disabled: false });
         }
-        return { disabled: true }
     }
 
     static contextType = Context;
-
+    //id param
     addToCart = (product) => {
         this.context.addCartItemToStore(product, this.state.selectedAttributesId);
     }
 
-    changeProductAttribute = (attributeId, id) => {
-        let selectedAttributesId = this.state.selectedAttributesId;
-        selectedAttributesId[attributeId] = id;
-        this.setState({ selectedAttributesId: selectedAttributesId })
-
+    changeProductAttribute = (product, attributeId, id) => {
+        this.context.onSelectedAttributesChange(product.id, attributeId, id);
     }
 
-    styleSwitcher = (id, attributeId, name) => {
-        if (this.state.selectedAttributesId[attributeId] === id && name === 'Color') {
+    styleSwitcher = (id, attributeId, name, productId) => {
+        
+        let selectedAttributesId = this.context.state.selectedProducts.find(el => el.id === productId)
+        if (selectedAttributesId === undefined) {
+            selectedAttributesId = undefined;
+        }   
+        else {
+            selectedAttributesId = selectedAttributesId.selectedAttributesId[attributeId];
+        }
+        
+        if (selectedAttributesId === id && name === 'Color') {
             return 'btn_color_selected'
         }
         if (name === 'Color') {
             return 'btn_color'
         }
-        if (this.state.selectedAttributesId[attributeId] === id && name !== 'Color') {
+        if (selectedAttributesId === id && name !== 'Color') {
             return 'btn_attribute_selected'
         }
         else if (name !== 'Color') {
@@ -59,7 +73,7 @@ class Product extends Component {
 
     displayProductContent = () => {
         let data = this.props.data;
-        let currencyIndex = this.context.state.currencyId
+        let currencyIndex = this.context.state.currencyId;
         if (data.loading) {
             return <div>Loading...</div>
         }
@@ -90,8 +104,9 @@ class Product extends Component {
                                     <p className='p_attribute'>
                                         {attribute.items.map((item, id) =>
                                             <button
-                                                onClick={() => this.changeProductAttribute(attributeId, id)}
-                                                className={this.styleSwitcher(id, attributeId, attribute.name)}
+                                                onClick={() => this.changeProductAttribute(
+                                                    data.product, attributeId, id)}
+                                                className={this.styleSwitcher(id, attributeId, attribute.name, data.product.id)}
                                                 style={{ backgroundColor: item.value }}
                                                 key={id}>
                                                 {attribute.name === 'Color' ? '' : item.value}

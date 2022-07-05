@@ -48,23 +48,18 @@ class Cart extends Component {
         }
     }
 
-    changeProductAttribute = (productId, attrId, itemId) => {
-        this.context.changeSelectedProductAttribute(productId, attrId, itemId);
-    }
-
     displayCurrencySymbol = () => {
-        if (this.context.state.currencyData.loading) {
+        if (this.context.state.currencyData === undefined) {
             return;
         }
-        return this.context.state.currencyData.currencies[this.context.state.currencyId].symbol;
-        
+        return this.context.state.currencyData[this.context.state.currencyId].symbol;
     }
 
-    displayCartProduct = () => {
+    displayCartProducts = () => {
         let currencyIndex = this.context.state.currencyId;
         return (
             <div className='main_cart'>
-                {this.context.state.storeItems.map((product, productId) =>
+                {this.context.state.cartItems.map((product, productId) =>
                     <div className='cart_product' key={productId}>
                         <div className='cart_product_info'>
                             <p className='p_productName'>{product.name}</p>
@@ -104,14 +99,12 @@ class Cart extends Component {
                 <div>
                     <div className='border'></div>
                     <div className='cart_order'>
-                        <div>  
-                            Tax 21%: {this.displayCurrencySymbol()}{this.context.state.tax}
+                        <div>
+                            Tax 21%: <span>{this.displayCurrencySymbol()}{this.context.state.tax}</span>
                         </div>
-                        <div>Quantity: <span style={{ fontWeight: '700' }}>
-                            {this.context.state.quantity}
+                        <div>Quantity: <span>{this.context.state.quantity}
                         </span></div>
-                        <div>Total: <span style={{ fontWeight: '700' }}>
-                            {this.displayCurrencySymbol()}{this.context.state.totalPrice}
+                        <div>Total: <span>{this.displayCurrencySymbol()}{this.context.state.totalPrice}
                         </span></div>
                         <button className='btn_order btn_add'>Order</button>
                     </div>
@@ -123,7 +116,7 @@ class Cart extends Component {
     render() {
         return (
             <div>
-                {this.displayCartProduct()}
+                {this.displayCartProducts()}
             </div>
         );
     }

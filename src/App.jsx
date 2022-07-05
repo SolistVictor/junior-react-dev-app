@@ -15,7 +15,7 @@ class App extends React.Component {
         <BrowserRouter>
           <Layout>
             <Routes>
-              <Route path='/' element={<CategoryPage />} />
+              <Route path='/:categoryName' element={<CategoryPage />} />
               <Route path='/product/:id' element={<ProductPage />} />
               <Route path='/cart' element={<CartPage />} />
             </Routes>

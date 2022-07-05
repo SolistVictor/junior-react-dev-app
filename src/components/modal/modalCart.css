@@ -8,7 +8,7 @@
     pointer-events: none;
     transition: .5s;
     left: 0px;
-    top: 78px;
+    top: 73px;
     position: absolute;
     z-index: 1;
 }
@@ -120,11 +120,6 @@
     margin-bottom: .5rem;
 }
 
-.btn_itemSize:hover {
-    background-color: #000;
-    color: #fff;
-}
-
 .btn_itemSize_selected {
     text-align: center;
     padding: .3rem;
@@ -146,10 +141,6 @@
     margin-right: .5rem;
     margin-bottom: .5rem;
     border: 1px solid #000;
-}
-
-.btn_itemColor:hover {
-    border: 1px solid #5ECE7B;
 }
 
 .btn_itemColor_selected {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { Context } from '../context/Context';
 import './Category.css';
 import circleIcon from '../assets/icons/Circle_Icon.png';
@@ -15,26 +15,22 @@ class Category extends Component {
 
     static contextType = Context;
 
-    displayCircleIcon = (productId) => {
-        if (this.context.state.selectedProducts.length === 0) {
-            return null;
-        }
-        for (let i = 0; i < this.context.state.selectedProducts.length; i++) {
-            if (productId === this.context.state.selectedProducts[i].id && 
-                this.context.state.selectedProducts[i].selectedAttributesId.length === 
-                this.context.state.selectedProducts[i].attributes.length) {
-                for (let j = 0; j < this.context.state.selectedProducts[i].selectedAttributesId.length; j++) {
-                    if (this.context.state.selectedProducts[i].selectedAttributesId[j] === undefined) {
-                        return null;
-                    }  
-                }
-                return (
-                    <img className='circleIcon' src={circleIcon} alt={circleIcon} />
-                )
-            }
-            return null; 
+    addToCart = (product) => {
+        this.context.addItemToCart(product, []);
+    }
+
+    displayCircleIcon = (product) => {
+        if (product.attributes.length === 0 && product.inStock) {
+            return (
+                <Link to='/cart'>
+                    <button className='btn_circleIcon' onClick={() => this.addToCart(product)}>
+                        <img  src={circleIcon} alt={circleIcon} />
+                    </button>
+                </Link>
+            )
         }
     }
+
 
     displayCategory = () => {
         let data = this.props.data;
@@ -43,41 +39,32 @@ class Category extends Component {
             return <div>Loading...</div>
         }
         else {
-            let index;
-            if (this.context.state.categoryName === 'all') {
-                index = 0;
-            }
-            else if (this.context.state.categoryName === 'clothes') {
-                index = 1;
-            }
-            else if (this.context.state.categoryName === 'tech') {
-                index = 2;
-            }
             return (
                 <div>
                     <h1 style={{ margin: '3rem 0', fontSize: '3rem', textTransform: 'uppercase' }}>
-                        {data.categories[index].name}
+                        {data.category.name}
                     </h1>
                     <div className='category_products'>
-                        {data.categories[index].products.map((product, id) =>
+                        {data.category.products.map((product, id) =>
                             <div key={id} className='categoty_product'>
                                 <button className='btn_product_img'>
                                     <Link onClick={(e) => {
-                                         if (!product.inStock) {
-                                            e.preventDefault();                                   
+                                        if (!product.inStock) {
+                                            e.preventDefault();
                                         }
                                     }}
-
                                         to={`/product/${product.id}`}>
 
                                         <img className={product.inStock ? 'category_product_img' : 'category_outOfStock_product_img'}
                                             src={product.gallery[0]} alt="no image" />
 
-                                        {this.displayCircleIcon(product.id)}
+
 
                                         {product.inStock ? null : <p className='p_outOfStock'>Out of stock</p>}
                                     </Link>
                                 </button>
+
+                                {this.displayCircleIcon(product)}
 
                                 <p className={product.inStock ? null : 'p_productName_outOfStock'}>
                                     {product.name}

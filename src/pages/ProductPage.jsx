@@ -37,7 +37,7 @@ class Productpage extends Component {
 
   render() {
     return (
-      <Query query={productIdQuery} variables={{ id: this.state.id }}>
+      <Query query={productIdQuery} fetchPolicy='network-only' variables={{ id: this.state.id }}>
 
         {({ data, loading }) => {
           if (loading) return <p>Loading…</p>;

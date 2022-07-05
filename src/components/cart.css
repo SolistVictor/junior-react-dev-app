@@ -11,7 +11,6 @@
     justify-content: space-between;
     margin-bottom: 1rem;
     padding-top: 1rem;
-
     border-top: 1px solid #E5E5E5;
 
 }
@@ -101,20 +100,11 @@
     margin-right: .5rem;
 }
 
-.btn_size:hover {
-    background-color: #000;
-    color: #fff;
-}
-
 .btn_color {
     width: 2rem;
     height: 2rem;
     margin-right: .5rem;
     border: 1px solid #000;
-}
-
-.btn_color:hover {
-    border: 1px solid #5ECE7B;
 }
 
 .btn_color_selected {
@@ -124,8 +114,7 @@
     outline: 3px solid #fff;
     outline-offset: -4px;
     border: 1px solid #5ECE7B;  
-    
-    
+  
 }
 
 .btn_arrowLeft {
@@ -145,4 +134,8 @@
     top: -3rem;
     right: +2rem;
    
+}
+
+span {
+    font-weight: 700;
 }

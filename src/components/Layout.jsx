@@ -32,38 +32,47 @@ class Layout extends Component {
         super(props)
 
         this.state = {
-            categoryName: 'all',
             modalActive: false,
-            isHide: true,
+            isHidden: true,
             currencyId: 0,
-            currencyData: this.props.data,
-            storeItems: [],
+            currencyData: undefined,
+            cartItems: [],
             quantity: 0,
             totalPrice: 0,
             tax: 0,
-            selectedProducts: [],
         }
     }
     static getDerivedStateFromProps(props, state) {
-        return { currencyData: props.data };
+        return { currencyData: props.data.currencies };
     }
 
-    displayCategory = () => {
+    componentDidMount() {
+        const raw = localStorage.getItem('data') || [];
+        if (raw.length === 0) {
+            return
+        }
+        this.setState(JSON.parse(raw));
+    }
+
+    componentDidUpdate() {
+        localStorage.setItem('data', JSON.stringify(this.state));
+    }
+
+    displayCategories = () => {
         let data = this.props.data;
         if (data.loading) {
             return <div>Loading...</div>
         }
         else {
             return data.categories.map((category, id) =>
-                <Link to='/' key={id}>
-                    <button onClick={e => this.setState({ categoryName: e.target.value })}
-                        id={id} value={category.name} className='btn_nav'>
+                <Link to={`/${category.name}`} key={id}>
+                    <button onClick={() => this.forceUpdate()}
+                        value={category.name} className='btn_nav'>
                         {category.name}
                     </button>
                 </Link>
 
             )
-
         }
     }
 
@@ -74,27 +83,27 @@ class Layout extends Component {
         }
         else {
             return (
-
-                <div className='currencies'>
-                    {data.currencies.map((item, id) =>
-                        <button onClick={() => this.onCurrencyChange(id)} className='btn_symbol_label' key={id}>
-                            {item.symbol}{' '}{item.label}
-                        </button>
-                    )}
+                <div onClick={() => this.setState({ isHidden: true })} className={this.state.isHidden ? 'currencies_wrapper' : 'currencies_wrapper active'}>
+                    <div className='currencies'>
+                        {data.currencies.map((item, id) =>
+                            <button onClick={() => this.onCurrencyChange(id)} className='btn_symbol_label' key={id}>
+                                {item.symbol}{' '}{item.label}
+                            </button>
+                        )}
+                    </div>
                 </div>
             )
         }
     }
 
     displayCurrencySymbol = () => {
-        if (this.state.currencyData.loading) {
+        if (this.props.data.loading) {
             return <div>Loading...</div>
         }
-
         return (
             <button className='btn_showCurrencies'
                 onClick={this.showCurrencyButtons}>
-                {this.state.currencyData.currencies[this.state.currencyId].symbol}
+                {this.state.currencyData[this.state.currencyId].symbol}
             </button>
         )
     }
@@ -106,118 +115,88 @@ class Layout extends Component {
     }
 
     showCurrencyButtons = () => {
-        this.setState({ isHide: !this.state.isHide })
+        this.setState({ isHidden: !this.state.isHidden })
     }
 
-    changeModalCondition = () => {
+    changeModalState = () => {
         this.setState({ modalActive: !this.state.modalActive });
     }
 
-    addCartItemToStore = (product, selectedAttributesId) => {
-        for (let i = 0; i < this.state.storeItems.length; i++) {
-            if (this.state.storeItems[i].id === product.id) {
-                for (let j = 0; j < this.state.storeItems[i].selectedAttributesId.length; j++) {
-                    if (this.state.storeItems[i].selectedAttributesId[j] === selectedAttributesId[j]) {
-                        let x = this.state.storeItems[i]; 
+    addItemToCart = (product, selectedAttributesId) => {
+        for (let i = 0; i < this.state.cartItems.length; i++) {
+            if (this.state.cartItems[i].id === product.id) {
+                for (let j = 0; j < this.state.cartItems[i].selectedAttributesId.length; j++) {
+                    if (this.state.cartItems[i].selectedAttributesId[j] === selectedAttributesId[j]) {
+                        let x = this.state.cartItems[i];
                         x.counter++;
-                        return this.setState({storeItems: [...this.state.storeItems]})
+                        return this.setState({ cartItems: [...this.state.cartItems] })
                     }
                 }
 
             }
         }
         let item = { ...product, imageIndex: 0, counter: 1, selectedAttributesId: selectedAttributesId };
-        //delete from selectedProducts, add to the cart
-        let selectedProducts = this.state.selectedProducts;
-        selectedProducts.splice(selectedProducts.findIndex(el => el.id === product.id), 1)
 
-        this.setState({ storeItems: [...this.state.storeItems, item] });
+        this.setState({ cartItems: [...this.state.cartItems, item] });
         this.calculatePrice();
     }
 
-    addItemToSelectedProducts = (product) => {
-        for (let i = 0; i < this.state.selectedProducts.length; i++) {
-            if(this.state.selectedProducts[i].id === product.id){
-              return;                                       
-            }
-        }
-        let selectedProduct = {
-            ...product, imageIndex: 0, counter: 1,
-            selectedAttributesId: []
-        };
-
-        this.setState({ selectedProducts: [...this.state.selectedProducts, selectedProduct] });
-    }
-
-    onSelectedAttributesChange = (productId, attributeId, id) => {
-        let selectedProducts = this.state.selectedProducts;
-        let index = selectedProducts.findIndex(el => el.id === productId);
-        selectedProducts[index].selectedAttributesId[attributeId] = id;
-        this.setState({selectedProducts: selectedProducts});
-    }
-
     removeCartProduct = (index, productId) => {
-        let items = [...this.state.storeItems];
+        let items = [...this.state.cartItems];
         for (let i = 0; i < items.length; i++) {
             if (items[i].id === productId) {
                 items.splice(index, 1);
             }
         }
-        this.setState({ storeItems: items })
+        this.setState({ cartItems: items })
     }
 
     increaseProductAmount = (index) => {
-        let items = [...this.state.storeItems];
+        let items = [...this.state.cartItems];
         items[index].counter++;
-        this.setState({ storeItems: items });
+        this.setState({ cartItems: items });
         this.calculatePrice();
     }
 
     decreaseProductAmount = (index, productId) => {
-        let items = [...this.state.storeItems];
+        let items = [...this.state.cartItems];
         items[index].counter--;
-        this.setState({ storeItems: [...items] });
-        if (this.state.storeItems[index].counter < 1) {
+        this.setState({ cartItems: [...items] });
+        if (this.state.cartItems[index].counter < 1) {
             this.removeCartProduct(index, productId);
         }
         this.calculatePrice();
     }
 
     clickArrowRight = (length, index) => {
-        let items = [...this.state.storeItems];
-        if (this.state.storeItems[index].imageIndex < length - 1) {
+        let items = [...this.state.cartItems];
+        if (this.state.cartItems[index].imageIndex < length - 1) {
             items[index].imageIndex++;
         }
         else {
             items[index].imageIndex = 0;
         }
-        this.setState({ storeItems: [...items] });
+        this.setState({ cartItems: [...items] });
     }
 
     clickArrowLeft = (length, index) => {
-        let items = [...this.state.storeItems];
-        if (this.state.storeItems[index].imageIndex > 0) {
+        let items = [...this.state.cartItems];
+        if (this.state.cartItems[index].imageIndex > 0) {
             items[index].imageIndex--;
         }
-        else if (this.state.storeItems[index].imageIndex === 0) {
+        else if (this.state.cartItems[index].imageIndex === 0) {
             items[index].imageIndex = length - 1
         }
-        this.setState({ storeItems: [...items] });
-    }
-
-    changeSelectedProductAttribute = (productId, attrId, itemId) => {
-        let items = this.state.storeItems;
-        items[productId].selectedAttributes[attrId] = itemId;
-        this.setState({ storeItems: items });
+        this.setState({ cartItems: [...items] });
     }
 
     calculatePrice = () => {
         let price = 0;
         let quantity = 0;
         let tax = 0;
-        for (let i = 0; i < this.state.storeItems.length; i++) {
-            price += this.state.storeItems[i].prices[this.state.currencyId].amount * this.state.storeItems[i].counter;
-            quantity += this.state.storeItems[i].counter;
+        for (let i = 0; i < this.state.cartItems.length; i++) {
+            price += this.state.cartItems[i].prices[this.state.currencyId].amount * this.state.cartItems[i].counter;
+            quantity += this.state.cartItems[i].counter;
         }
         tax = price * 0.21;
         this.setState({ quantity: quantity, totalPrice: (price + tax).toFixed(2), tax: tax.toFixed(2) });
@@ -226,8 +205,8 @@ class Layout extends Component {
     reCalculatePrice = (id) => {
         let price = 0;
         let tax = 0;
-        for (let i = 0; i < this.state.storeItems.length; i++) {
-            price += this.state.storeItems[i].prices[id].amount * this.state.storeItems[i].counter;
+        for (let i = 0; i < this.state.cartItems.length; i++) {
+            price += this.state.cartItems[i].prices[id].amount * this.state.cartItems[i].counter;
         }
         tax = price * 0.21;
         return ({ totalPrice: (price + tax).toFixed(2), tax: tax.toFixed(2) });
@@ -239,20 +218,17 @@ class Layout extends Component {
         return (
             <Context.Provider value={{
                 state: this.state,
-                addCartItemToStore: this.addCartItemToStore,
+                addItemToCart: this.addItemToCart,
                 increaseProductAmount: this.increaseProductAmount,
                 decreaseProductAmount: this.decreaseProductAmount,
                 clickArrowRight: this.clickArrowRight,
                 clickArrowLeft: this.clickArrowLeft,
-                changeSelectedProductAttribute: this.changeSelectedProductAttribute,
                 calculatePrice: this.calculatePrice,
-                addItemToSelectedProducts: this.addItemToSelectedProducts,
-                onSelectedAttributesChange: this.onSelectedAttributesChange
             }}>
                 <div className='container'>
                     <nav className='navbar'>
                         <div>
-                            {this.displayCategory()}
+                            {this.displayCategories()}
                         </div>
 
                         <div className='brand'>
@@ -263,7 +239,7 @@ class Layout extends Component {
                             {this.displayCurrencySymbol()}
 
                             {/* vector_img */}
-                            {this.state.isHide ? <img src={vectorDown} alt="cart" /> : <img src={vectorUp} alt="cart" />}
+                            {this.state.isHidden ? <img src={vectorDown} alt="cart" /> : <img src={vectorUp} alt="cart" />}
                             {/* modal_cart_img */}
                             <button onClick={() => this.setState({ modalActive: true })} className='btn_cart'>
                                 <img className='cart_icon' src={cart_icon} alt="cart" />
@@ -272,11 +248,11 @@ class Layout extends Component {
                         </div>
                     </nav>
 
-                    {this.state.isHide ? null : this.displayCurrencies()}
+                    {this.state.isHidden ? null : this.displayCurrencies()}
 
 
                     <ModalCart modalActive={this.state.modalActive}
-                        changeModalCondition={this.changeModalCondition}>
+                        changeModalState={this.changeModalState}>
                     </ModalCart>
 
 

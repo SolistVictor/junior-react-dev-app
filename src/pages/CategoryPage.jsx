@@ -1,43 +1,64 @@
 import { gql } from 'apollo-boost';
-import { graphql } from 'react-apollo';
+import { graphql, Query } from 'react-apollo';
 import React, { Component } from 'react';
 import Category from '../components/Category';
+import { Context } from '../context/Context';
 
 
 const query = gql`
-{
-    categories{
+  query category($input: CategoryInput) {
+    category(input: $input) {
+      name
+      products{
+        id
         name
-        products{
+        inStock
+        attributes{
           id
           name
-          inStock
-          prices{
-            currency{
-              label
-              symbol
-            }
-            amount
-          }
-          gallery
+          items{
+            value
+          } 
         }
+        prices{
+          currency{
+            label
+            symbol
+          }
+          amount
+        }
+        gallery
+      }
     }
-}
+  }
 `
+
 
 class CategoryPage extends Component {
 
 
-    render() {
-        return (
+  static contextType = Context;
+
+
+  render() {
+    return (
+      <Query query={query} variables={{ input: {title:  window.location.href.substring(22)} }}> 
+
+        {({ data, loading }) => {
+          if (loading) return <p>Loading…</p>;
+          return (
             <div>
-                <Category data={this.props.data} />
+               <Category data={data} />
             </div>
-        );
-    }
+          );
+        }}
+      </Query>
+
+    );
+  }
 }
 
 
-export default graphql(query)(CategoryPage);
+export default CategoryPage;
 
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Context } from '../../context/Context';
 import './modalCart.css';
 
@@ -16,14 +17,10 @@ class ModalCart extends Component {
         else {
             document.body.style.overflow = 'unset';
         }
-       
+
     }
 
     static contextType = Context;
-
-    changeProductAttribute = (productId, attrId, itemId) => {
-        this.context.changeSelectedProductAttribute(productId, attrId, itemId);
-    }
 
     styleSwitcher = (id, attrId, name, product) => {
         if (product.selectedAttributesId[attrId] === id && name === 'Color') {
@@ -40,11 +37,18 @@ class ModalCart extends Component {
         }
     }
 
+    displayCurrencySymbol = () => {
+        if (this.context.state.currencyData === undefined) {
+            return;
+        }
+        return this.context.state.currencyData[this.context.state.currencyId].symbol;
+    }
+
     displayModalCartItems = () => {
         let currencyIndex = this.context.state.currencyId;
         return (
             <div className='items'>
-                {this.context.state.storeItems.map((product, id) =>
+                {this.context.state.cartItems.map((product, id) =>
                     <div className='item' key={id}>
                         <div className='item_info'>
                             <p className='title'>{product.name}</p>
@@ -58,7 +62,6 @@ class ModalCart extends Component {
                                     {attribute.items.map((item, itemId) =>
                                         <button
                                             className={this.styleSwitcher(itemId, attrId, attribute.name, product)}
-                                            onClick={() => this.changeProductAttribute(id, attrId, itemId)}
                                             style={{ backgroundColor: item.value }}
                                             key={itemId}>
                                             {attribute.name === 'Color' ? '' : item.value}
@@ -85,7 +88,7 @@ class ModalCart extends Component {
 
     render() {
         return (
-            <div className={this.props.modalActive ? 'modal active' : 'modal'} onClick={() => this.props.changeModalCondition()}>
+            <div className={this.props.modalActive ? 'modal active' : 'modal'} onClick={() => this.props.changeModalState()}>
                 <div className={this.props.modalActive ? 'modal_content active' : 'modal_content'} onClick={e => e.stopPropagation()}>
                     <div style={{ marginBottom: '2rem' }}>
                         <span style={{ fontWeight: '700' }}>My bag, </span>{this.context.state.quantity} items
@@ -94,16 +97,20 @@ class ModalCart extends Component {
 
                     <div className='total'>
                         <p>Total</p>
-                        <p>{this.context.state.totalPrice}</p>
+                        <p>{this.displayCurrencySymbol()}{this.context.state.totalPrice}</p>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <button className='btn_viewBag'>
-                            View bag
-                        </button>
-                        <button className='btn_checkOut'>
-                            Check out
-                        </button>
+                        <Link to='/all'>
+                            <button onClick={() => this.props.changeModalState()} className='btn_viewBag'>
+                                View bag
+                            </button>
+                        </Link>
+                        <Link to='/cart'>
+                            <button onClick={() => this.props.changeModalState()} className='btn_checkOut'>
+                                Check out
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>

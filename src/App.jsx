@@ -8,10 +8,14 @@ import CartPage from './pages/CartPage';
 
 
 class App extends React.Component {
+  componentDidMount() {
+    if (window.location.href === window.location.origin + '/') {
+      window.location.replace('/all');
+    }
+  }
 
   render() {
     return (
-   
         <BrowserRouter>
           <Layout>
             <Routes>
@@ -21,8 +25,6 @@ class App extends React.Component {
             </Routes>
           </Layout>
         </BrowserRouter>
-     
-
     );
   }
 }

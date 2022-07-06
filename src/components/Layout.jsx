@@ -125,14 +125,19 @@ class Layout extends Component {
     addItemToCart = (product, selectedAttributesId) => {
         for (let i = 0; i < this.state.cartItems.length; i++) {
             if (this.state.cartItems[i].id === product.id) {
+                //check for airtag
+                if (product.attributes.length === 0) {
+                    let item = this.state.cartItems[i];
+                    item.counter++;
+                    return this.setState({ cartItems: [...this.state.cartItems] });
+                }
                 for (let j = 0; j < this.state.cartItems[i].selectedAttributesId.length; j++) {
                     if (this.state.cartItems[i].selectedAttributesId[j] === selectedAttributesId[j]) {
-                        let x = this.state.cartItems[i];
-                        x.counter++;
-                        return this.setState({ cartItems: [...this.state.cartItems] })
+                        let item = this.state.cartItems[i];
+                        item.counter++;
+                        return this.setState({ cartItems: [...this.state.cartItems] });
                     }
                 }
-
             }
         }
         let item = { ...product, imageIndex: 0, counter: 1, selectedAttributesId: selectedAttributesId };

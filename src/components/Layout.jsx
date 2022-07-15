@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './Layout.css';
-import { gql } from 'apollo-boost';
 import { graphql } from 'react-apollo';
 import ModalCart from './modal/ModalCart';
 import { Link } from 'react-router-dom';
@@ -9,22 +8,10 @@ import cart_icon from "../assets/icons/Vector.png";
 import vectorUp from '../assets/icons/VectorUp.png';
 import vectorDown from '../assets/icons/VectorDown.png';
 import { Context } from '../context/Context';
+import {layoutQuery} from '../queries/queries';
 
 
 
-
-
-const query = gql`
-{
-    categories{
-        name
-    }
-    currencies{
-        symbol
-        label
-    }
-}
-`
 
 
 class Layout extends Component {
@@ -55,6 +42,14 @@ class Layout extends Component {
     }
 
     componentDidUpdate() {
+        //for update quantity and totalPrice
+        let quantity = 0;
+        for (let i = 0; i < this.state.cartItems.length; i++) {
+            quantity += this.state.cartItems[i].counter;
+        }
+        if( this.state.quantity !== quantity) {
+            this.calculatePrice();
+        }
         localStorage.setItem('data', JSON.stringify(this.state));
     }
 
@@ -83,7 +78,7 @@ class Layout extends Component {
         }
         else {
             return (
-                <div onClick={() => this.setState({ isHidden: true })} className={this.state.isHidden ? 'currencies_wrapper' : 'currencies_wrapper active'}>
+                <div onClick={() => this.showCurrencyButtons()} className={this.state.isHidden ? 'currencies_wrapper' : 'currencies_wrapper active'}>
                     <div className='currencies'>
                         {data.currencies.map((item, id) =>
                             <button onClick={() => this.onCurrencyChange(id)} className='btn_symbol_label' key={id}>
@@ -115,35 +110,42 @@ class Layout extends Component {
     }
 
     showCurrencyButtons = () => {
+        if(this.state.modalActive){
+            return
+        }
         this.setState({ isHidden: !this.state.isHidden })
     }
 
     changeModalState = () => {
+        if(!this.state.isHidden){
+            return
+        }
         this.setState({ modalActive: !this.state.modalActive });
     }
 
     addItemToCart = (product, selectedAttributesId) => {
+        localStorage.removeItem(product.id);
+        loop:
         for (let i = 0; i < this.state.cartItems.length; i++) {
             if (this.state.cartItems[i].id === product.id) {
-                //check for airtag
-                if (product.attributes.length === 0) {
+                //for airtag
+                if(product.attributes.length === 0){
                     let item = this.state.cartItems[i];
                     item.counter++;
-                    return this.setState({ cartItems: [...this.state.cartItems] });
+                    return this.setState({ cartItems: [...this.state.cartItems] })
                 }
                 for (let j = 0; j < this.state.cartItems[i].selectedAttributesId.length; j++) {
-                    if (this.state.cartItems[i].selectedAttributesId[j] === selectedAttributesId[j]) {
-                        let item = this.state.cartItems[i];
-                        item.counter++;
-                        return this.setState({ cartItems: [...this.state.cartItems] });
+                    if (this.state.cartItems[i].selectedAttributesId[j] !== selectedAttributesId[j]) {
+                        break loop;
                     }
                 }
+                let item = this.state.cartItems[i];
+                item.counter++;
+                return this.setState({ cartItems: [...this.state.cartItems] })
             }
         }
         let item = { ...product, imageIndex: 0, counter: 1, selectedAttributesId: selectedAttributesId };
-
         this.setState({ cartItems: [...this.state.cartItems, item] });
-        this.calculatePrice();
     }
 
     removeCartProduct = (index, productId) => {
@@ -244,10 +246,10 @@ class Layout extends Component {
                             {this.displayCurrencySymbol()}
 
                             {/* vector_img */}
-                            {this.state.isHidden ? <img src={vectorDown} alt="cart" /> : <img src={vectorUp} alt="cart" />}
+                            {this.state.isHidden ? <img src={vectorDown} alt="" /> : <img src={vectorUp} alt="" />}
                             {/* modal_cart_img */}
-                            <button onClick={() => this.setState({ modalActive: true })} className='btn_cart'>
-                                <img className='cart_icon' src={cart_icon} alt="cart" />
+                            <button onClick={() => this.changeModalState()} className='btn_cart'>
+                                <img className='cart_icon' src={cart_icon} alt="" />
                                 {this.state.quantity > 0 ? <div className='circle'>{this.state.quantity}</div> : null}
                             </button>
                         </div>
@@ -270,4 +272,4 @@ class Layout extends Component {
     }
 }
 
-export default graphql(query)(Layout);
+export default graphql(layoutQuery)(Layout);

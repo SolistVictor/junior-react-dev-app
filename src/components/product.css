@@ -16,6 +16,9 @@
     display: flex;
     flex-direction: column;
     margin-right: 1rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 75vh;
 }
 
 .additional_photos_img {
@@ -23,12 +26,18 @@
     height: 6rem;
     margin-bottom: 1.5rem;
     cursor: pointer;
+    object-fit: cover;
+    object-position: top left;
+    
+   
 }
 
 .product_info {
     font-size: 1.5rem;
     line-height: 2.5rem;
     padding-right: 10rem;
+    width: 35rem;
+    max-width: 35rem;
 }
 
 .product_attributes {
@@ -44,8 +53,12 @@
 }
 
 .product_img {
-    width: 38rem;
-    height: 35rem;
+    max-width: 32rem;
+    max-height: 30rem;
+}
+
+.p_info {
+    font-size: 2rem;
 }
 
 .p_attribute {
@@ -58,6 +71,10 @@
     text-transform: uppercase;
     font-weight: 900;
     font-size: 1.2rem;
+}
+
+.p_price {
+    font-weight: 900;
 }
 
 .p_description {

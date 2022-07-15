@@ -1,33 +1,10 @@
 import React, { Component } from 'react';
 import Cart from '../components/Cart';
-import { gql } from 'apollo-boost';
 import { graphql } from 'react-apollo';
+import './cartPage.css';
+import {cartQuery} from '../queries/queries';
 
 
-const query = gql`
-{
-    categories{
-        products{
-            id
-            name
-            gallery
-            prices{
-                currency{
-                    symbol
-                    label
-                }
-                amount
-            }
-            attributes{
-                name
-   			    items{
-                    value
-                }
-            }
-        }
-    }
-}
-`
 
 
 
@@ -36,11 +13,11 @@ class CartPage extends Component {
     render() {
         return (
             <div >
-                <h1 style={{ margin: '4rem 0', textTransform: 'uppercase' }}>Cart</h1>
+                <h1 className='cart_header'>Cart</h1>
                 <Cart data={this.props.data} />
             </div>
         );
     }
 }
 
-export default graphql(query)(CartPage);
+export default graphql(cartQuery)(CartPage);

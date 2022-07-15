@@ -10,7 +10,7 @@
     left: 0px;
     top: 73px;
     position: absolute;
-    z-index: 1;
+    z-index: 10;
 }
 
 .modal.active {
@@ -20,17 +20,16 @@
 
 .modal_content {
     position: fixed;
-    z-index: 1;
+    z-index: 10;
     margin-right: 6.5rem;
     top: 4.5rem;
-    left: 68rem;
     padding: 2rem 1rem;
     background-color: #ffffff;
     height: 42rem;
     width: 22rem;
     transform: scale(0.5);
     transition: .4s all;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 .modal_content.active {
@@ -50,6 +49,7 @@
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
+    align-items: center;
     margin-top: .5rem;
     margin-bottom: 2.5rem;
     font-size: 1rem;
@@ -75,9 +75,15 @@
     margin-bottom: .5rem;
 }
 
+.image_container {
+    width: 8rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .item_img {
-    width: 7.5rem;
-    height: 11.8rem;
+    max-width: 10rem;
+    height: 7rem;
 }
 
 .item_count {

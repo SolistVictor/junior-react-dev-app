@@ -5,10 +5,6 @@ import './modalCart.css';
 
 
 class ModalCart extends Component {
-    constructor(props) {
-        super(props)
-
-    }
 
     componentDidUpdate() {
         if (this.props.modalActive) {
@@ -77,8 +73,8 @@ class ModalCart extends Component {
                             <button onClick={() => this.context.decreaseProductAmount(id, product.id)} className='btn_itemCount'>−</button>
                         </div>
 
-                        <div >
-                            <img className='item_img' src={product.gallery[product.imageIndex]} alt={product.gallery[product.imageIndex]} />
+                        <div className='image_container'>
+                            <img className='item_img' src={product.gallery[product.imageIndex]} alt='' />
                         </div>
                     </div>
                 )}
@@ -101,12 +97,12 @@ class ModalCart extends Component {
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Link to='/all'>
+                        <Link to='/cart'>
                             <button onClick={() => this.props.changeModalState()} className='btn_viewBag'>
                                 View bag
                             </button>
                         </Link>
-                        <Link to='/cart'>
+                        <Link to='/all'>
                             <button onClick={() => this.props.changeModalState()} className='btn_checkOut'>
                                 Check out
                             </button>

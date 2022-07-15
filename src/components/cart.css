@@ -50,12 +50,14 @@
 }
 
 .cart_picture {
-    width: 20%;
+    display: flex;
+    justify-content: flex-end;
+    width: 20rem;
 }
 
 .cart_product_img {
-    width: 15rem;
-    height: 20rem;
+    max-width: 20rem;
+    max-height: 15rem;
     position: relative;
 }
 
@@ -68,6 +70,14 @@
 .p_productName {
     font-size: 1.8rem;
     font-family: 'Raleway';
+}
+
+.p_counter {
+    font-weight: 900;
+}
+
+.arrows {
+    position: relative;
 }
 
 .btn_count {
@@ -123,7 +133,7 @@
     width: 1.5rem;
     height: 1.5rem;
     top: -3rem;
-    right: +4rem;
+    right: +3rem;
 }
 
 .btn_arrowRight {
@@ -132,7 +142,7 @@
     width: 1.5rem;
     height: 1.5rem;
     top: -3rem;
-    right: +2rem;
+    right: +1rem;
    
 }
 

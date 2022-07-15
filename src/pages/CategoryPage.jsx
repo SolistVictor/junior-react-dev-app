@@ -1,37 +1,10 @@
-import { gql } from 'apollo-boost';
-import { graphql, Query } from 'react-apollo';
+import { Query } from 'react-apollo';
 import React, { Component } from 'react';
 import Category from '../components/Category';
 import { Context } from '../context/Context';
+import {categoryQuery} from '../queries/queries';
 
 
-const query = gql`
-  query category($input: CategoryInput) {
-    category(input: $input) {
-      name
-      products{
-        id
-        name
-        inStock
-        attributes{
-          id
-          name
-          items{
-            value
-          } 
-        }
-        prices{
-          currency{
-            label
-            symbol
-          }
-          amount
-        }
-        gallery
-      }
-    }
-  }
-`
 
 
 class CategoryPage extends Component {
@@ -42,7 +15,7 @@ class CategoryPage extends Component {
 
   render() {
     return (
-      <Query query={query} variables={{ input: {title:  window.location.href.substring(22)} }}> 
+      <Query query={categoryQuery} variables={{ input: {title:  window.location.href.substring(22)} }}> 
 
         {({ data, loading }) => {
           if (loading) return <p>Loading…</p>;

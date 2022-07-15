@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Context } from '../context/Context';
 import './Category.css';
 import circleIcon from '../assets/icons/Circle_Icon.png';
@@ -8,29 +8,55 @@ import circleIcon from '../assets/icons/Circle_Icon.png';
 
 
 class Category extends Component {
-    constructor(props) {
-        super(props)
-
-    }
-
+ 
     static contextType = Context;
 
     addToCart = (product) => {
-        this.context.addItemToCart(product, []);
+        let selectedAttributesId = [];
+        if (selectedAttributesId.length === 0) {
+            for (let i = 0; i < product.attributes.length; i++) {
+                selectedAttributesId.push(0); 
+            }
+        }
+        this.context.addItemToCart(product, selectedAttributesId);
+        // let data = localStorage.getItem(product.id); 
+        // if(product.attributes.length === 0 || data !== null){ 
+        //     this.context.addItemToCart(product, JSON.parse(data)); 
+        // }
     }
 
     displayCircleIcon = (product) => {
-        if (product.attributes.length === 0 && product.inStock) {
-            return (
-                <Link to='/cart'>
-                    <button className='btn_circleIcon' onClick={() => this.addToCart(product)}>
-                        <img  src={circleIcon} alt={circleIcon} />
-                    </button>
-                </Link>
-            )
+        if (product.inStock) {
+            const content = <button className='btn_circleIcon' onClick={() => this.addToCart(product)}>
+                <img className='circleIcon' src={circleIcon} alt="" />
+            </button>
+
+            // if (product.attributes.length === 0) {
+            //     return content;
+            // }
+
+            // const string = localStorage.getItem(product.id)
+
+            // if (string === null) {
+            //     return null;
+            // }
+
+            // const data = JSON.parse(string);
+            // console.log(data)
+
+            // if (data.length !== product.attributes.length) {
+            //     return null;
+            // }
+
+            // for (let i = 0; i < product.attributes.length; i++) {
+            //     if (data[i] === undefined) {
+            //         return null;
+            //     }
+            // }
+
+            return content;
         }
     }
-
 
     displayCategory = () => {
         let data = this.props.data;
@@ -41,37 +67,33 @@ class Category extends Component {
         else {
             return (
                 <div>
-                    <h1 style={{ margin: '3rem 0', fontSize: '3rem', textTransform: 'uppercase' }}>
+                    <h1 className='category_title'>
                         {data.category.name}
                     </h1>
                     <div className='category_products'>
                         {data.category.products.map((product, id) =>
-                            <div key={id} className='categoty_product'>
-                                <button className='btn_product_img'>
-                                    <Link onClick={(e) => {
-                                        if (!product.inStock) {
-                                            e.preventDefault();
-                                        }
-                                    }}
-                                        to={`/product/${product.id}`}>
+                            <div key={id} className='category_product'>
+                                <div className='category_product_wrapper'>
+                                    <button className='btn_product_img'>
+                                        <Link
+                                            to={`/product/${product.id}`}>
 
-                                        <img className={product.inStock ? 'category_product_img' : 'category_outOfStock_product_img'}
-                                            src={product.gallery[0]} alt="no image" />
+                                            <img className={product.inStock ? 'category_product_img' : 'category_outOfStock_product_img'}
+                                                src={product.gallery[0]} alt="" />
 
+                                            {product.inStock ? null : <p className='p_outOfStock'>Out of stock</p>}
+                                        </Link>
+                                    </button>
 
+                                    {this.displayCircleIcon(product)}
 
-                                        {product.inStock ? null : <p className='p_outOfStock'>Out of stock</p>}
-                                    </Link>
-                                </button>
-
-                                {this.displayCircleIcon(product)}
-
-                                <p className={product.inStock ? null : 'p_productName_outOfStock'}>
-                                    {product.name}
-                                </p>
-                                <p className={product.inStock ? 'category_product_price' : 'category_product_price_outOfStock'}>
-                                    {product.prices[currencyIndex].currency.symbol}{product.prices[currencyIndex].amount}
-                                </p>
+                                    <p className={product.inStock ? null : 'p_productName_outOfStock'}>
+                                        {product.name}
+                                    </p>
+                                    <p className={product.inStock ? 'category_product_price' : 'category_product_price_outOfStock'}>
+                                        {product.prices[currencyIndex].currency.symbol}{product.prices[currencyIndex].amount}
+                                    </p>
+                                </div>
                             </div>
                         )}
                     </div>

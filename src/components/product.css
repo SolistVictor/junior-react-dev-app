@@ -49,7 +49,10 @@
 
 .product_picture {
     margin-right: 5rem;
-    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 40rem;
 }
 
 .product_img {
@@ -81,6 +84,16 @@
     font-size: 1rem;
     line-height: 1.7rem;
     font-family: 'Roboto';
+}
+
+.outOfStock {
+    position: absolute;
+    color: #8D8F9A;
+    font-family: 'Raleway';
+    font-weight: 400;
+    font-size: 3rem;
+    text-transform: uppercase;
+    background-color: transparent;
 }
 
 .btn_attribute {

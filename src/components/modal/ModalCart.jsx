@@ -47,6 +47,7 @@ class ModalCart extends Component {
                 {this.context.state.cartItems.map((product, id) =>
                     <div className='item' key={id}>
                         <div className='item_info'>
+                            <p className='title'>{product.brand}</p>
                             <p className='title'>{product.name}</p>
                             <p className='price'>
                                 {product.prices[currencyIndex].currency.symbol}
@@ -69,7 +70,7 @@ class ModalCart extends Component {
 
                         <div className='item_count'>
                             <button onClick={() => this.context.increaseProductAmount(id)} className='btn_itemCount'>+</button>
-                            <p style={{ fontWeight: '900' }}>{product.counter}</p>
+                            <p className='p_counter'>{product.counter}</p>
                             <button onClick={() => this.context.decreaseProductAmount(id, product.id)} className='btn_itemCount'>−</button>
                         </div>
 
@@ -86,8 +87,8 @@ class ModalCart extends Component {
         return (
             <div className={this.props.modalActive ? 'modal active' : 'modal'} onClick={() => this.props.changeModalState()}>
                 <div className={this.props.modalActive ? 'modal_content active' : 'modal_content'} onClick={e => e.stopPropagation()}>
-                    <div style={{ marginBottom: '2rem' }}>
-                        <span style={{ fontWeight: '700' }}>My bag, </span>{this.context.state.quantity} items
+                    <div className='quantity'>
+                        <span>My bag, </span>{this.context.state.quantity} items
                     </div>
                     {this.displayModalCartItems()}
 
@@ -96,7 +97,7 @@ class ModalCart extends Component {
                         <p>{this.displayCurrencySymbol()}{this.context.state.totalPrice}</p>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div className='links'>
                         <Link to='/cart'>
                             <button onClick={() => this.props.changeModalState()} className='btn_viewBag'>
                                 View bag

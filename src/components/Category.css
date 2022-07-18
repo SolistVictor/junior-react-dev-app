@@ -4,8 +4,7 @@
     flex-wrap: wrap;
     padding-bottom: 4rem;
     align-items: center;
-    align-self: center;
-    
+    justify-content: center;
 }
 
 .category_title {

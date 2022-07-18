@@ -19,6 +19,7 @@ const cartQuery = gql`
             id
             name
             gallery
+            brand
             prices{
                 currency{
                     symbol
@@ -44,6 +45,7 @@ const categoryQuery = gql`
       products{
         id
         name
+        brand
         inStock
         attributes{
           id

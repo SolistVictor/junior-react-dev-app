@@ -53,6 +53,10 @@ class Layout extends Component {
         localStorage.setItem('data', JSON.stringify(this.state));
     }
 
+    closeModals = () => {
+        this.setState({isHidden: true, modalActive: false});
+    }
+
     displayCategories = () => {
         let data = this.props.data;
         if (data.loading) {
@@ -60,7 +64,7 @@ class Layout extends Component {
         }
         else {
             return data.categories.map((category, id) =>
-                <Link to={`/${category.name}`} key={id}>
+                <Link onClick={this.closeModals} to={`/${category.name}`} key={id}>
                     <button onClick={() => this.forceUpdate()}
                         value={category.name} className='btn_nav'>
                         {category.name}
@@ -136,7 +140,7 @@ class Layout extends Component {
                 }
                 for (let j = 0; j < this.state.cartItems[i].selectedAttributesId.length; j++) {
                     if (this.state.cartItems[i].selectedAttributesId[j] !== selectedAttributesId[j]) {
-                        break loop;
+                        continue loop;
                     }
                 }
                 let item = this.state.cartItems[i];

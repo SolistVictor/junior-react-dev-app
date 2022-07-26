@@ -10,6 +10,7 @@
     display: flex;
     margin-bottom: 1rem;
     padding-top: 1rem;
+
 }
 
 .additional_photos {
@@ -28,8 +29,13 @@
     cursor: pointer;
     object-fit: cover;
     object-position: top left;
-    
-   
+}
+
+.product_info_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .product_info {

@@ -93,53 +93,55 @@ class Product extends Component {
                                 <img className='additional_photos_img' src={img} key={id} alt={id} onClick={() => this.setState({ imageId: id })} />
                             )}
                         </div>
+                        <div className='product_info_wrapper'>
+                            <div className='product_picture'>
+                                <img className='product_img' src={data.product.gallery[this.state.imageId]} alt="qwdqd" />
+                                {data.product.inStock ? null : <p className='outOfStock'>Out of stock</p>}
+                            </div>
 
-                        <div className='product_picture'>
-                            <img className='product_img' src={data.product.gallery[this.state.imageId]} alt="qwdqd" />
-                            {data.product.inStock ? null : <p className='outOfStock'>Out of stock</p>}
-                        </div>
+                            <div className='product_info'>
+                                <p className='p_info' >{data.product.brand}</p>
+                                <p className='p_info' >{data.product.name}</p>
 
-                        <div className='product_info'>
-                            <p className='p_info' >{data.product.brand}</p>
-                            <p className='p_info' >{data.product.name}</p>
+                                {data.product.attributes.map((attribute, attributeId) =>
+                                    <div className='product_attributes' key={attributeId}>
+                                        <p className='p_title'>
+                                            {attribute.name}:
+                                        </p>
+                                        <p className='p_attribute'>
+                                            {attribute.items.map((item, id) =>
+                                                <button
+                                                    onClick={() => this.changeProductAttribute(attributeId, id, data.product.inStock)}
+                                                    className={this.styleSwitcher(id, attributeId, attribute.name)}
+                                                    style={{ backgroundColor: item.value }}
+                                                    key={id}>
+                                                    {attribute.name === 'Color' ? '' : item.value}
+                                                </button>
+                                            )}
+                                        </p>
 
-                            {data.product.attributes.map((attribute, attributeId) =>
-                                <div className='product_attributes' key={attributeId}>
-                                    <p className='p_title'>
-                                        {attribute.name}:
-                                    </p>
-                                    <p className='p_attribute'>
-                                        {attribute.items.map((item, id) =>
-                                            <button
-                                                onClick={() => this.changeProductAttribute(attributeId, id, data.product.inStock)}
-                                                className={this.styleSwitcher(id, attributeId, attribute.name)}
-                                                style={{ backgroundColor: item.value }}
-                                                key={id}>
-                                                {attribute.name === 'Color' ? '' : item.value}
-                                            </button>
-                                        )}
-                                    </p>
+                                    </div>
+                                )}
 
+                                <p className='p_title'>
+                                    Price:
+                                </p>
+                                <p className='p_price' >{data.product.prices[currencyIndex].currency.symbol}
+                                    {data.product.prices[currencyIndex].amount}
+                                </p>
+
+                                <button
+                                    disabled={this.state.disabled}
+                                    onClick={() => this.addToCart(data.product)} className='btn_add'>
+                                    Add to cart
+                                </button>
+
+                                <div className='p_description'>
+                                    {ReactHtmlParser(data.product.description)}
                                 </div>
-                            )}
-
-                            <p className='p_title'>
-                                Price:
-                            </p>
-                            <p className='p_price' >{data.product.prices[currencyIndex].currency.symbol}
-                                {data.product.prices[currencyIndex].amount}
-                            </p>
-
-                            <button
-                                disabled={this.state.disabled}
-                                onClick={() => this.addToCart(data.product)} className='btn_add'>
-                                Add to cart
-                            </button>
-
-                            <div className='p_description'>
-                                {ReactHtmlParser( data.product.description)}
                             </div>
                         </div>
+
 
 
                     </div>

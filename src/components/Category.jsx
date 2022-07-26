@@ -88,6 +88,9 @@ class Category extends Component {
                                     {this.displayCircleIcon(product)}
 
                                     <p className={product.inStock ? null : 'p_productName_outOfStock'}>
+                                        {product.brand}
+                                    </p>
+                                    <p className={product.inStock ? null : 'p_productName_outOfStock'}>
                                         {product.name}
                                     </p>
                                     <p className={product.inStock ? 'category_product_price' : 'category_product_price_outOfStock'}>

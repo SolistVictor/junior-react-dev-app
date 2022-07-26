@@ -6,6 +6,8 @@ import './modalCart.css';
 
 class ModalCart extends Component {
 
+    static contextType = Context;
+
     componentDidUpdate() {
         if (this.props.modalActive) {
             document.body.style.overflow = 'hidden';
@@ -15,8 +17,6 @@ class ModalCart extends Component {
         }
 
     }
-
-    static contextType = Context;
 
     styleSwitcher = (id, attrId, name, product) => {
         if (product.selectedAttributesId[attrId] === id && name === 'Color') {
